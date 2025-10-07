@@ -1,119 +1,109 @@
-# Next.js SaaS Starter
+# Blurby - Privacy-First Screen Sharing Protection 🛡️
 
-This is a starter template for building a SaaS application using **Next.js** with support for authentication, Stripe integration for payments, and a dashboard for logged-in users.
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/olly-ai-agent-for-social/ofjpapfmglfjdhmadpegoeifocomaeje)](https://chromewebstore.google.com/detail/olly-ai-agent-for-social/ofjpapfmglfjdhmadpegoeifocomaeje)
+[![Twitter Follow](https://img.shields.io/twitter/follow/blurbyapp?style=social)](https://twitter.com/blurbyapp)
 
-**Demo: [https://next-saas-start.vercel.app/](https://next-saas-start.vercel.app/)**
+Blurby is an open-source browser extension that automatically protects sensitive information during screen sharing. Using advanced AI detection, Blurby identifies and blurs private data in real-time, ensuring your presentations and tutorials remain secure.
 
-## Features
+## 🌟 Key Features
 
-- Marketing landing page (`/`) with animated Terminal element
-- Pricing page (`/pricing`) which connects to Stripe Checkout
-- Dashboard pages with CRUD operations on users/teams
-- Basic RBAC with Owner and Member roles
-- Subscription management with Stripe Customer Portal
-- Email/password authentication with JWTs stored to cookies
-- Global middleware to protect logged-in routes
-- Local middleware to protect Server Actions or validate Zod schemas
-- Activity logging system for any user events
+- **AI-Powered Detection**: Automatically identifies sensitive information like API keys, passwords, emails, and more
+- **Zero-Click Protection**: Works instantly without manual configuration
+- **Real-Time Blur Controls**: Individual controls for each sensitive element
+- **Custom Blur Areas**: Drag and drop to create custom blur zones
+- **Privacy-First Architecture**: All processing happens locally on your device
+- **Universal Compatibility**: Works with Zoom, Teams, Google Meet, Discord, OBS, and more
+- **Zero Latency**: No impact on screen sharing performance
 
-## Tech Stack
+## 🎯 Perfect for
 
-- **Framework**: [Next.js](https://nextjs.org/)
-- **Database**: [Postgres](https://www.postgresql.org/)
-- **ORM**: [Drizzle](https://orm.drizzle.team/)
-- **Payments**: [Stripe](https://stripe.com/)
-- **UI Library**: [shadcn/ui](https://ui.shadcn.com/)
+- **Course Creators & Educators**: Safely demonstrate code without exposing API keys
+- **Developers**: Share your work without revealing sensitive credentials
+- **Solution Architects**: Present demos while protecting client data
+- **Product Managers**: Share analytics without exposing internal metrics
+- **Team Leads**: Conduct code reviews with confidence
 
-## Getting Started
+## 🚀 Getting Started
 
-```bash
-git clone https://github.com/nextjs/saas-starter
-cd saas-starter
-pnpm install
-```
+1. Visit our [Chrome Web Store page](https://chromewebstore.google.com/detail/olly-ai-agent-for-social/ofjpapfmglfjdhmadpegoeifocomaeje)
+2. Click "Add to Chrome"
+3. Start sharing your screen with confidence!
 
-## Running Locally
+## 💻 Development
 
-[Install](https://docs.stripe.com/stripe-cli) and log in to your Stripe account:
+Blurby is built with:
+- Next.js 14
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+- Chrome Extensions API
 
-```bash
-stripe login
-```
+### Local Setup
 
-Use the included setup script to create your `.env` file:
+\`\`\`bash
+# Clone the repository
+git clone https://github.com/yourusername/blurby.git
 
-```bash
-pnpm db:setup
-```
+# Install dependencies
+cd blurby
+npm install
 
-Run the database migrations and seed the database with a default user and team:
+# Start development server
+npm run dev
+\`\`\`
 
-```bash
-pnpm db:migrate
-pnpm db:seed
-```
+## 🤝 Contributing
 
-This will create the following user and team:
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
-- User: `test@test.com`
-- Password: `admin123`
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Open a Pull Request
 
-You can also create new users through the `/sign-up` route.
+## 🔒 Privacy & Security
 
-Finally, run the Next.js development server:
+- All processing happens locally on your device
+- No data is ever sent to external servers
+- AES-256 encryption for local storage
+- GDPR compliant by design
+- Regular security audits
 
-```bash
-pnpm dev
-```
+## 🌟 Success Story
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to see the app in action.
+Blurby was born from a real incident where a student accidentally captured an instructor's API key during a tutorial, resulting in unexpected charges. This inspired us to create a solution that lets educators and professionals share their screens without compromising sensitive information.
 
-You can listen for Stripe webhooks locally through their CLI to handle subscription change events:
+## 📈 Why Choose Blurby?
 
-```bash
-stripe listen --forward-to localhost:3000/api/stripe/webhook
-```
+- **Privacy First**: Your data never leaves your computer
+- **One-Time Payment**: $19 for lifetime access (regular price $49)
+- **No Subscriptions**: No recurring fees or hidden charges
+- **Money-Back Guarantee**: 30-day satisfaction guarantee
+- **Regular Updates**: Free lifetime updates included
 
-## Testing Payments
+## 🏆 Used By Professionals From
 
-To test Stripe payments, use the following test card details:
+- Vercel
+- Stripe
+- Linear
+- And thousands of developers worldwide
 
-- Card Number: `4242 4242 4242 4242`
-- Expiration: Any future date
-- CVC: Any 3-digit number
+## 📝 License
 
-## Going to Production
+MIT License - see [LICENSE](LICENSE) for details
 
-When you're ready to deploy your SaaS application to production, follow these steps:
+## 🔗 Links
 
-### Set up a production Stripe webhook
+- [Website](https://blurby.xyz)
+- [Documentation](https://docs.blurby.xyz)
+- [Chrome Web Store](https://chromewebstore.google.com/detail/olly-ai-agent-for-social/ofjpapfmglfjdhmadpegoeifocomaeje)
+- [Twitter](https://twitter.com/blurbyapp)
 
-1. Go to the Stripe Dashboard and create a new webhook for your production environment.
-2. Set the endpoint URL to your production API route (e.g., `https://yourdomain.com/api/stripe/webhook`).
-3. Select the events you want to listen for (e.g., `checkout.session.completed`, `customer.subscription.updated`).
+## 📧 Support
 
-### Deploy to Vercel
+Need help? Contact us at support@blurby.xyz
 
-1. Push your code to a GitHub repository.
-2. Connect your repository to [Vercel](https://vercel.com/) and deploy it.
-3. Follow the Vercel deployment process, which will guide you through setting up your project.
+---
 
-### Add environment variables
-
-In your Vercel project settings (or during deployment), add all the necessary environment variables. Make sure to update the values for the production environment, including:
-
-1. `BASE_URL`: Set this to your production domain.
-2. `STRIPE_SECRET_KEY`: Use your Stripe secret key for the production environment.
-3. `STRIPE_WEBHOOK_SECRET`: Use the webhook secret from the production webhook you created in step 1.
-4. `POSTGRES_URL`: Set this to your production database URL.
-5. `AUTH_SECRET`: Set this to a random string. `openssl rand -base64 32` will generate one.
-
-## Other Templates
-
-While this template is intentionally minimal and to be used as a learning resource, there are other paid versions in the community which are more full-featured:
-
-- https://achromatic.dev
-- https://shipfa.st
-- https://makerkit.dev
-- https://zerotoshipped.com
-- https://turbostarter.dev
+Keywords: screen sharing protection, privacy tool, sensitive data protection, API key protection, screen blur, presentation privacy, screen sharing security, developer privacy, tutorial privacy, screen recording protection, privacy extension, screen sharing blur, data protection tool, privacy software, screen privacy, secure presentations, privacy guard, screen masking, data masking, privacy shield

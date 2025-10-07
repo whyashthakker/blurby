@@ -1,14 +1,20 @@
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
-import { Manrope } from 'next/font/google';
+import { Inter, Manrope } from 'next/font/google';
 import { getUser, getTeamForUser } from '@/lib/db/queries';
 import { SWRConfig } from 'swr';
+import localFont from 'next/font/local';
+import { metadata as siteMetadata } from "./metadata"
 
-export const metadata: Metadata = {
-  title: 'Next.js SaaS Starter',
-  description: 'Get started quickly with Next.js, Postgres, and Stripe.'
-};
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 
+const calSans = localFont({
+  src: "../public/fonts/CalSans-SemiBold.woff2",
+  variable: "--font-cal",
+  display: "swap",
+})
+
+export const metadata: Metadata = siteMetadata
 export const viewport: Viewport = {
   maximumScale: 1
 };
@@ -25,7 +31,7 @@ export default function RootLayout({
       lang="en"
       className={`bg-white dark:bg-gray-950 text-black dark:text-white ${manrope.className}`}
     >
-      <body className="min-h-[100dvh] bg-gray-50">
+      <body className={`${inter.variable} ${calSans.variable} min-h-[100dvh] bg-gray-50`}>
         <SWRConfig
           value={{
             fallback: {

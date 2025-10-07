@@ -1,4 +1,9 @@
 {
+  "name": "blurby",
+  "version": "1.0.0",
+  "description": "Blurby",
+  "author": "Blurby",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
