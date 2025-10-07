@@ -1,6 +1,6 @@
 import { desc, and, eq, isNull } from 'drizzle-orm';
 import { db } from './drizzle';
-import { activityLogs, teamMembers, teams, users } from './schema';
+import { activityLogs, teamMembers, teams, users, licenseKeys } from './schema';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/auth/session';
 
@@ -127,4 +127,59 @@ export async function getTeamForUser() {
   });
 
   return result?.team || null;
+}
+
+export async function createLicenseKey(
+  userId: number,
+  stripePaymentIntentId: string
+) {
+  const licenseKey = generateLicenseKey();
+  
+  const result = await db
+    .insert(licenseKeys)
+    .values({
+      userId,
+      licenseKey,
+      stripePaymentIntentId,
+      status: 'active'
+    })
+    .returning();
+
+  return result[0];
+}
+
+export async function getLicenseKeyByUser(userId: number) {
+  const result = await db
+    .select()
+    .from(licenseKeys)
+    .where(and(eq(licenseKeys.userId, userId), eq(licenseKeys.status, 'active')))
+    .orderBy(desc(licenseKeys.purchasedAt))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : null;
+}
+
+export async function getLicenseKeyByPaymentIntent(paymentIntentId: string) {
+  const result = await db
+    .select()
+    .from(licenseKeys)
+    .where(eq(licenseKeys.stripePaymentIntentId, paymentIntentId))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : null;
+}
+
+function generateLicenseKey(): string {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const segments = [];
+  
+  for (let i = 0; i < 4; i++) {
+    let segment = '';
+    for (let j = 0; j < 4; j++) {
+      segment += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    segments.push(segment);
+  }
+  
+  return `BLURBY-${segments.join('-')}`;
 }

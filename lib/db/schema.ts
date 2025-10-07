@@ -68,6 +68,18 @@ export const invitations = pgTable('invitations', {
   status: varchar('status', { length: 20 }).notNull().default('pending'),
 });
 
+export const licenseKeys = pgTable('license_keys', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id')
+    .notNull()
+    .references(() => users.id),
+  licenseKey: varchar('license_key', { length: 255 }).notNull().unique(),
+  status: varchar('status', { length: 20 }).notNull().default('active'),
+  stripePaymentIntentId: text('stripe_payment_intent_id').unique(),
+  purchasedAt: timestamp('purchased_at').notNull().defaultNow(),
+  expiresAt: timestamp('expires_at'),
+});
+
 export const teamsRelations = relations(teams, ({ many }) => ({
   teamMembers: many(teamMembers),
   activityLogs: many(activityLogs),
@@ -77,6 +89,7 @@ export const teamsRelations = relations(teams, ({ many }) => ({
 export const usersRelations = relations(users, ({ many }) => ({
   teamMembers: many(teamMembers),
   invitationsSent: many(invitations),
+  licenseKeys: many(licenseKeys),
 }));
 
 export const invitationsRelations = relations(invitations, ({ one }) => ({
@@ -112,6 +125,13 @@ export const activityLogsRelations = relations(activityLogs, ({ one }) => ({
   }),
 }));
 
+export const licenseKeysRelations = relations(licenseKeys, ({ one }) => ({
+  user: one(users, {
+    fields: [licenseKeys.userId],
+    references: [users.id],
+  }),
+}));
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Team = typeof teams.$inferSelect;
@@ -122,6 +142,8 @@ export type ActivityLog = typeof activityLogs.$inferSelect;
 export type NewActivityLog = typeof activityLogs.$inferInsert;
 export type Invitation = typeof invitations.$inferSelect;
 export type NewInvitation = typeof invitations.$inferInsert;
+export type LicenseKey = typeof licenseKeys.$inferSelect;
+export type NewLicenseKey = typeof licenseKeys.$inferInsert;
 export type TeamDataWithMembers = Team & {
   teamMembers: (TeamMember & {
     user: Pick<User, 'id' | 'name' | 'email'>;

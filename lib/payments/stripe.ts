@@ -46,6 +46,43 @@ export async function createCheckoutSession({
   redirect(session.url!);
 }
 
+export async function createLifetimeCheckoutSession() {
+  const user = await getUser();
+
+  if (!user) {
+    redirect('/sign-up?redirect=lifetime');
+  }
+
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ['card'],
+    line_items: [
+      {
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: 'Blurby Lifetime Access',
+            description: 'One-time payment for lifetime access to Blurby privacy protection',
+            images: [`${process.env.BASE_URL}/logo.png`],
+          },
+          unit_amount: 1900, // $19.00 in cents
+        },
+        quantity: 1,
+      },
+    ],
+    mode: 'payment',
+    success_url: `${process.env.BASE_URL}/api/stripe/lifetime-checkout?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${process.env.BASE_URL}/dashboard`,
+    client_reference_id: user.id.toString(),
+    allow_promotion_codes: true,
+    metadata: {
+      type: 'lifetime_access',
+      userId: user.id.toString(),
+    },
+  });
+
+  redirect(session.url!);
+}
+
 export async function createCustomerPortalSession(team: Team) {
   if (!team.stripeCustomerId || !team.stripeProductId) {
     redirect('/pricing');

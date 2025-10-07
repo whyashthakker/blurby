@@ -94,6 +94,9 @@ export function Navbar() {
             <Button variant="ghost" asChild>
               <Link href="/contact">Contact</Link>
             </Button>
+            <Button variant="outline" asChild>
+              <Link href="/sign-up">Sign Up</Link>
+            </Button>
             <Button asChild>
               <a href="https://chromewebstore.google.com/detail/olly-ai-agent-for-social/ofjpapfmglfjdhmadpegoeifocomaeje" target="_blank" rel="noopener noreferrer">
                 Get Blurby - $19
@@ -139,6 +142,9 @@ export function Navbar() {
                 <div className="flex flex-col gap-2 mt-4">
                   <Button variant="ghost" asChild>
                     <Link href="/contact">Contact</Link>
+                  </Button>
+                  <Button variant="outline" asChild>
+                    <Link href="/sign-up">Sign Up</Link>
                   </Button>
                   <Button asChild>
                     <a href="https://chromewebstore.google.com/detail/olly-ai-agent-for-social/ofjpapfmglfjdhmadpegoeifocomaeje" target="_blank" rel="noopener noreferrer">

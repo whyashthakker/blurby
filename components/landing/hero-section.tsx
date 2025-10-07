@@ -34,8 +34,10 @@ export function HeroSection() {
                 <ArrowRight className="w-4 h-4" />
               </a>
             </Button>
-            <Button size="lg" variant="outline" className="font-cal">
-              Watch Demo
+            <Button size="lg" variant="outline" className="font-cal" asChild>
+              <a href="/sign-up">
+                Start Free Account
+              </a>
             </Button>
           </div>
 {/* 
