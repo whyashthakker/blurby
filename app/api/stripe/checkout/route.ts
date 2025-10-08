@@ -88,6 +88,10 @@ export async function GET(request: NextRequest) {
       })
       .where(eq(teams.id, userTeam[0].teamId));
 
+    // Create monthly license key for user
+    const { createMonthlyLicenseKey } = await import('@/lib/db/queries');
+    await createMonthlyLicenseKey(user[0].id, subscriptionId);
+
     await setSession(user[0]);
     return NextResponse.redirect(new URL('/dashboard', request.url));
   } catch (error) {

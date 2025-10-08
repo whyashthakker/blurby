@@ -29,6 +29,9 @@ export const teams = pgTable('teams', {
   stripeProductId: text('stripe_product_id'),
   planName: varchar('plan_name', { length: 50 }),
   subscriptionStatus: varchar('subscription_status', { length: 20 }),
+  subscriptionCancelAt: timestamp('subscription_cancel_at'),
+  subscriptionCanceledAt: timestamp('subscription_canceled_at'),
+  subscriptionEndedAt: timestamp('subscription_ended_at'),
 });
 
 export const teamMembers = pgTable('team_members', {
@@ -75,7 +78,9 @@ export const licenseKeys = pgTable('license_keys', {
     .references(() => users.id),
   licenseKey: varchar('license_key', { length: 255 }).notNull().unique(),
   status: varchar('status', { length: 20 }).notNull().default('active'),
+  licenseType: varchar('license_type', { length: 20 }).notNull().default('lifetime'), // 'lifetime' or 'monthly'
   stripePaymentIntentId: text('stripe_payment_intent_id').unique(),
+  stripeSubscriptionId: text('stripe_subscription_id').unique(),
   purchasedAt: timestamp('purchased_at').notNull().defaultNow(),
   expiresAt: timestamp('expires_at'),
 });

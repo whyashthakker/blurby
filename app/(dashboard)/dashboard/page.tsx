@@ -21,6 +21,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Loader2, PlusCircle, Shield, Star, Key, Copy, CheckCircle } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
 type ActionState = {
@@ -218,7 +219,7 @@ function ManageSubscription() {
                 {teamData?.subscriptionStatus === 'active'
                   ? 'Billed monthly'
                   : teamData?.subscriptionStatus === 'trialing'
-                  ? 'Trial period'
+                  ? 'Active subscription'
                   : 'No active subscription'}
               </p>
             </div>
@@ -424,6 +425,58 @@ function InviteTeamMember() {
   );
 }
 
+function QuickAccessCard() {
+  const { data: licenseData } = useSWR('/api/user/license', fetcher);
+  const { data: teamData } = useSWR('/api/team', fetcher);
+  
+  const hasLifetimeAccess = licenseData?.licenseKey;
+  const hasActiveSubscription = teamData?.subscriptionStatus === 'active' || teamData?.subscriptionStatus === 'trialing';
+  
+  if (hasLifetimeAccess || hasActiveSubscription) {
+    return (
+      <Card className="mb-6 border-green-200 bg-green-50">
+        <CardContent className="pt-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <CheckCircle className="w-5 h-5 text-green-600" />
+              <div>
+                <h3 className="font-cal font-medium text-green-800">
+                  {hasLifetimeAccess ? 'Lifetime Access Active' : 'Monthly Subscription Active'}
+                </h3>
+                <p className="text-sm text-green-600 font-cal">
+                  {hasLifetimeAccess ? 'You have lifetime protection' : 'Subscription is active'}
+                </p>
+              </div>
+            </div>
+            <Button variant="outline" size="sm" asChild className="font-cal">
+              <Link href="/dashboard/get-access">Manage</Link>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+  
+  return (
+    <Card className="mb-6 border-blue-200 bg-blue-50">
+      <CardContent className="pt-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Shield className="w-5 h-5 text-blue-600" />
+            <div>
+              <h3 className="font-cal font-medium text-blue-800">Get Protected</h3>
+              <p className="text-sm text-blue-600 font-cal">Choose your privacy protection plan</p>
+            </div>
+          </div>
+          <Button size="sm" asChild className="bg-blue-600 hover:bg-blue-700 font-cal">
+            <Link href="/dashboard/get-access">Get Access</Link>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function SettingsPage() {
   return (
     <section className="flex-1 p-4 lg:p-8">
@@ -436,16 +489,15 @@ export default function SettingsPage() {
           className="w-8 h-8"
         />
         <div>
-          <h1 className="text-lg lg:text-2xl font-cal font-medium">Blurby Dashboard</h1>
-          <p className="text-muted-foreground text-sm">Manage your privacy protection settings</p>
+          <h1 className="text-lg lg:text-2xl font-medium">Team</h1>
+          <p className="text-gray-600 text-sm">Manage your team members</p>
         </div>
       </div>
       
-      <LifetimeAccess />
-      
-      <Suspense fallback={<SubscriptionSkeleton />}>
-        <ManageSubscription />
+      <Suspense fallback={<Card className="mb-6 h-[80px]"><CardContent className="pt-6">Loading...</CardContent></Card>}>
+        <QuickAccessCard />
       </Suspense>
+      
       <Suspense fallback={<TeamMembersSkeleton />}>
         <TeamMembers />
       </Suspense>

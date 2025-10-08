@@ -37,10 +37,7 @@ export async function createCheckoutSession({
     cancel_url: `${process.env.BASE_URL}/pricing`,
     customer: team.stripeCustomerId || undefined,
     client_reference_id: user.id.toString(),
-    allow_promotion_codes: true,
-    subscription_data: {
-      trial_period_days: 14
-    }
+    allow_promotion_codes: true
   });
 
   redirect(session.url!);
@@ -78,6 +75,42 @@ export async function createLifetimeCheckoutSession() {
       type: 'lifetime_access',
       userId: user.id.toString(),
     },
+  });
+
+  redirect(session.url!);
+}
+
+export async function createMonthlyCheckoutSession(priceId: string) {
+  const user = await getUser();
+
+  if (!user) {
+    redirect('/sign-up?redirect=monthly');
+  }
+
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ['card'],
+    line_items: [
+      {
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: 'Blurby Monthly Access',
+            description: 'Monthly subscription for Blurby privacy protection',
+            images: [`${process.env.BASE_URL}/logo.png`],
+          },
+          unit_amount: 250, // $2.50 in cents
+          recurring: {
+            interval: 'month',
+          },
+        },
+        quantity: 1,
+      },
+    ],
+    mode: 'subscription',
+    success_url: `${process.env.BASE_URL}/api/stripe/checkout?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${process.env.BASE_URL}/dashboard/get-access`,
+    client_reference_id: user.id.toString(),
+    allow_promotion_codes: true,
   });
 
   redirect(session.url!);
@@ -165,22 +198,41 @@ export async function handleSubscriptionChange(
     return;
   }
 
+  const updateData: any = {
+    subscriptionStatus: status
+  };
+
+  // Handle cancellation timestamps
+  if (subscription.cancel_at) {
+    updateData.subscriptionCancelAt = new Date(subscription.cancel_at * 1000);
+  }
+  if (subscription.canceled_at) {
+    updateData.subscriptionCanceledAt = new Date(subscription.canceled_at * 1000);
+  }
+  if (subscription.ended_at) {
+    updateData.subscriptionEndedAt = new Date(subscription.ended_at * 1000);
+  }
+
   if (status === 'active' || status === 'trialing') {
     const plan = subscription.items.data[0]?.plan;
-    await updateTeamSubscription(team.id, {
-      stripeSubscriptionId: subscriptionId,
-      stripeProductId: plan?.product as string,
-      planName: (plan?.product as Stripe.Product).name,
-      subscriptionStatus: status
-    });
+    updateData.stripeSubscriptionId = subscriptionId;
+    updateData.stripeProductId = plan?.product as string;
+    updateData.planName = (plan?.product as Stripe.Product).name;
+    
+    // Update monthly license expiry if it exists
+    const { updateMonthlyLicenseExpiry } = await import('@/lib/db/queries');
+    await updateMonthlyLicenseExpiry(subscriptionId, status);
   } else if (status === 'canceled' || status === 'unpaid') {
-    await updateTeamSubscription(team.id, {
-      stripeSubscriptionId: null,
-      stripeProductId: null,
-      planName: null,
-      subscriptionStatus: status
-    });
+    updateData.stripeSubscriptionId = null;
+    updateData.stripeProductId = null;
+    updateData.planName = null;
+    
+    // Expire monthly license if it exists
+    const { updateMonthlyLicenseExpiry } = await import('@/lib/db/queries');
+    await updateMonthlyLicenseExpiry(subscriptionId, status);
   }
+
+  await updateTeamSubscription(team.id, updateData);
 }
 
 export async function getStripePrices() {

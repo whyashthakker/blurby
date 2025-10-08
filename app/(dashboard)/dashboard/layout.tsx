@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Users, Settings, Shield, Activity, Menu } from 'lucide-react';
+import { Users, Settings, Shield, Activity, Menu, CreditCard, HelpCircle } from 'lucide-react';
 
 export default function DashboardLayout({
   children
@@ -15,8 +15,9 @@ export default function DashboardLayout({
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const navItems = [
+    { href: '/dashboard/get-access', icon: CreditCard, label: 'Plans' },
+    { href: '/dashboard/how-to-use', icon: HelpCircle, label: 'How to use' },
     { href: '/dashboard', icon: Users, label: 'Team' },
-    { href: '/dashboard/general', icon: Settings, label: 'General' },
     { href: '/dashboard/activity', icon: Activity, label: 'Activity' },
     { href: '/dashboard/security', icon: Shield, label: 'Security' }
   ];
@@ -26,7 +27,7 @@ export default function DashboardLayout({
       {/* Mobile header */}
       <div className="lg:hidden flex items-center justify-between bg-white border-b border-gray-200 p-4">
         <div className="flex items-center">
-          <span className="font-medium">Settings</span>
+          <span className="font-cal font-medium">Settings</span>
         </div>
         <Button
           className="-mr-3"
@@ -58,7 +59,7 @@ export default function DashboardLayout({
                   onClick={() => setIsSidebarOpen(false)}
                 >
                   <item.icon className="h-4 w-4" />
-                  {item.label}
+                  <span className="font-cal">{item.label}</span>
                 </Button>
               </Link>
             ))}

@@ -1,4 +1,4 @@
-import { desc, and, eq, isNull } from 'drizzle-orm';
+import { desc, and, eq, isNull, lt } from 'drizzle-orm';
 import { db } from './drizzle';
 import { activityLogs, teamMembers, teams, users, licenseKeys } from './schema';
 import { cookies } from 'next/headers';
@@ -53,6 +53,9 @@ export async function updateTeamSubscription(
     stripeProductId: string | null;
     planName: string | null;
     subscriptionStatus: string;
+    subscriptionCancelAt?: Date | null;
+    subscriptionCanceledAt?: Date | null;
+    subscriptionEndedAt?: Date | null;
   }
 ) {
   await db
@@ -131,9 +134,16 @@ export async function getTeamForUser() {
 
 export async function createLicenseKey(
   userId: number,
-  stripePaymentIntentId: string
+  stripePaymentIntentId: string,
+  licenseType: 'lifetime' | 'monthly' = 'lifetime',
+  stripeSubscriptionId?: string
 ) {
   const licenseKey = generateLicenseKey();
+  
+  // For monthly licenses, set expiry to 30 days from now
+  const expiresAt = licenseType === 'monthly' 
+    ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days
+    : null;
   
   const result = await db
     .insert(licenseKeys)
@@ -141,11 +151,71 @@ export async function createLicenseKey(
       userId,
       licenseKey,
       stripePaymentIntentId,
-      status: 'active'
+      stripeSubscriptionId,
+      licenseType,
+      status: 'active',
+      expiresAt
     })
     .returning();
 
   return result[0];
+}
+
+export async function createMonthlyLicenseKey(
+  userId: number,
+  stripeSubscriptionId: string
+) {
+  const licenseKey = generateLicenseKey();
+  
+  // Set expiry to 30 days from now
+  const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+  
+  const result = await db
+    .insert(licenseKeys)
+    .values({
+      userId,
+      licenseKey,
+      stripeSubscriptionId,
+      licenseType: 'monthly',
+      status: 'active',
+      expiresAt
+    })
+    .returning();
+
+  return result[0];
+}
+
+export async function updateMonthlyLicenseExpiry(
+  stripeSubscriptionId: string,
+  status: string
+) {
+  const updateData: any = {
+    status: status === 'active' ? 'active' : 'expired'
+  };
+  
+  // If subscription is active, extend expiry by 30 days
+  if (status === 'active') {
+    updateData.expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+  }
+  
+  await db
+    .update(licenseKeys)
+    .set(updateData)
+    .where(eq(licenseKeys.stripeSubscriptionId, stripeSubscriptionId));
+}
+
+export async function expireMonthlyLicenses() {
+  // This function can be called periodically to expire monthly licenses
+  await db
+    .update(licenseKeys)
+    .set({ status: 'expired' })
+    .where(
+      and(
+        eq(licenseKeys.licenseType, 'monthly'),
+        eq(licenseKeys.status, 'active'),
+        lt(licenseKeys.expiresAt, new Date())
+      )
+    );
 }
 
 export async function getLicenseKeyByUser(userId: number) {
