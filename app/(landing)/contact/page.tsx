@@ -30,8 +30,8 @@ export default function ContactPage() {
                   <p className="text-muted-foreground mb-2">
                     Get help with technical issues, billing questions, or feature requests.
                   </p>
-                  <a href="mailto:support@blurby.app" className="text-primary hover:underline">
-                    support@blurby.app
+                  <a href="mailto:support@explainx.ai" className="text-primary hover:underline">
+                    support@explainx.ai
                   </a>
                 </div>
               </div>

@@ -139,7 +139,7 @@ export function PricingSection() {
           </div>
           
           <p className="text-muted-foreground font-cal text-sm">
-            Questions? Contact us at support@blurby.xyz • No recurring charges • Cancel anytime
+            Questions? Contact us at support@explainx.ai • No recurring charges • Cancel anytime
           </p>
         </div>
       </div>

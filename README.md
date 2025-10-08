@@ -102,7 +102,7 @@ MIT License - see [LICENSE](LICENSE) for details
 
 ## 📧 Support
 
-Need help? Contact us at support@blurby.xyz
+Need help? Contact us at support@explainx.ai
 
 ---
 

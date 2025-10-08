@@ -59,10 +59,14 @@ export default function PrivacyPage() {
             <ul className="list-disc list-inside text-green-700 dark:text-green-300 mt-2 space-y-1">
               <li>Any content from your screen or websites you visit</li>
               <li>Sensitive information that you blur or protect</li>
+              <li>API keys, passwords, or any credentials</li>
               <li>Screenshots or recordings of your screen</li>
               <li>Personal data from forms or websites</li>
               <li>Browsing history or website content</li>
             </ul>
+            <p className="text-green-800 dark:text-green-200 leading-relaxed mt-4">
+              <strong>Local Processing Only:</strong> All data processing happens locally on your device. Nothing is ever sent to our servers or any third-party services.
+            </p>
           </div>
         </section>
 
@@ -80,9 +84,20 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="text-2xl font-cal mb-4">Data Security</h2>
-          <p className="text-muted-foreground leading-relaxed">
-            All processing happens locally on your device. Blurby uses advanced encryption and security measures to protect any data we do collect. Your sensitive information never leaves your computer, ensuring complete privacy and security.
+          <h2 className="text-2xl font-cal mb-4">Data Security & Local Processing</h2>
+          <div className="bg-blue-50 dark:bg-blue-950 p-6 rounded-lg">
+            <p className="text-blue-800 dark:text-blue-200 leading-relaxed mb-4">
+              <strong>100% Local Processing:</strong> All data processing happens exclusively on your device. Blurby operates entirely offline for privacy protection.
+            </p>
+            <ul className="list-disc list-inside text-blue-700 dark:text-blue-300 space-y-1">
+              <li>No data transmission to external servers</li>
+              <li>No cloud processing or storage</li>
+              <li>Your sensitive information never leaves your computer</li>
+              <li>Complete control over your data at all times</li>
+            </ul>
+          </div>
+          <p className="text-muted-foreground leading-relaxed mt-4">
+            Since everything is processed locally, we cannot be held responsible for any data exposure that may occur on your device. You maintain full control and responsibility for your data security.
           </p>
         </section>
 
@@ -114,7 +129,7 @@ export default function PrivacyPage() {
           </p>
           <div className="mt-4 p-4 bg-muted/50 rounded-lg">
             <p className="text-muted-foreground">
-              Email: <a href="mailto:privacy@blurby.app" className="text-primary hover:underline">privacy@blurby.app</a><br/>
+              Email: <a href="mailto:support@explainx.ai" className="text-primary hover:underline">support@explainx.ai</a><br/>
               Company: AISOLO TECHNOLOGIES PRIVATE LIMITED
             </p>
           </div>
